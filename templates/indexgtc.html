@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Recommendation System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background: linear-gradient(135deg, #141E30, #243B55); color:#fff; }
+        header { text-align:center; padding:2rem; background: rgba(0,0,0,0.5);}
+        header h1 { margin:0; font-size:2.5rem; color:#f5c518;}
+        header p { margin:0.5rem 0; font-size:1.1rem; color:#ddd;}
+        .container { max-width:800px; margin:2rem auto; background:rgba(255,255,255,0.05); border-radius:12px; padding:2rem; box-shadow:0 8px 20px rgba(0,0,0,0.3);}
+        form { display:flex; flex-direction:column; gap:1rem;}
+        label { font-weight:600; }
+        input, select, button { padding:0.8rem; border:none; border-radius:8px; font-size:1rem; width:100%; }
+        button { background:#f5c518; color:#000; font-weight:bold; cursor:pointer; transition:0.3s;}
+        button:hover { background:#e4b20f;}
+        .results { margin-top:2rem;}
+        .movie-card { display:flex; gap:1rem; align-items:flex-start; background: rgba(0,0,0,0.4); padding:1rem; border-radius:10px; margin-bottom:1rem; transition: transform 0.2s;}
+        .movie-card:hover { transform: scale(1.02);}
+        .movie-card img { width:120px; height:auto; border-radius:8px; object-fit:cover; }
+        .movie-info { flex:1; }
+        .movie-info h3 { margin:0; color:#f5c518;}
+        .movie-info p { margin:0.2rem 0; color:#ccc;}
+        footer { text-align:center; padding:1.5rem; margin-top:3rem; background: rgba(0,0,0,0.6); font-size:0.9rem; color:#aaa;}
+        @media (max-width:600px){header h1{font-size:2rem;} .container{margin:1rem; padding:1rem;} .movie-card{flex-direction:column; align-items:center;} .movie-card img{width:100%;}}
+    </style>
+</head>
+<body>
+<header>
+    <h1>🎬 Movie Recommendation System</h1>
+    <p>A Machine Learning Project by Jahir Hussain</p>
+</header>
+
+<div class="container">
+    <form id="recForm">
+        <label for="movie">Enter a Movie Name:</label>
+        <input type="text" id="movie" name="movie" placeholder="e.g. 3 Idiots" required list="movies">
+
+        <label for="number">Number of Recommendations:</label>
+        <input type="number" id="number" name="number" value="5" min="1" max="20" required>
+
+        <button type="submit">Get Recommendations</button>
+    </form>
+
+    <datalist id="movies"></datalist>
+    <div class="results" id="results"></div>
+</div>
+
+<footer>© 2025 | ML Movie Recommendation | Built with Python & ML</footer>
+
+<script>
+    // Load movie names for autocomplete
+    async function loadMovieList() {
+        const response = await fetch("/movies");
+        const movies = await response.json();
+        const datalist = document.getElementById("movies");
+        datalist.innerHTML = "";
+        movies.forEach(movie => {
+            const option = document.createElement("option");
+            option.value = movie;
+            datalist.appendChild(option);
+        });
+    }
+    loadMovieList();
+
+    // Submit form and fetch recommendations
+    document.getElementById("recForm").addEventListener("submit", async function(e){
+        e.preventDefault();
+        const movie = document.getElementById("movie").value;
+        const number = document.getElementById("number").value;
+
+        const response = await fetch("/recommend", {
+            method:"POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({movie: movie, number: number})
+        });
+
+        const data = await response.json();
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "";
+
+        if(data.error){
+            resultsDiv.innerHTML = `<p style="color:red;">${data.error}</p>`;
+        } else {
+            data.forEach(rec => {
+                const card = document.createElement("div");
+                card.classList.add("movie-card");
+
+                // If image exists, show it
+                const imgHTML = rec["Image"] 
+                    ? `<img src="${rec["Image"]}" alt="${rec["Movie Title"]}">` 
+                    : "";
+
+                card.innerHTML = `
+                    ${imgHTML}
+                    <div class="movie-info">
+                        <h3>${rec["Movie Title"]}</h3>
+                        <p><strong>Rating:</strong> ${rec["Rating"]}</p>
+                        <p><strong>Duration:</strong> ${rec["Duration"]}</p>
+                        <p><strong>Genre:</strong> ${rec["Genre"]}</p>
+                        <p><strong>Cast:</strong> ${rec["Cast"]}</p>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+    });
+</script>
+</body>
+</html>
