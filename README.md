@@ -22,6 +22,8 @@ A **content-based movie recommendation engine** built as a full **Data Science p
 - ✅ **Popular picks** (Trending actors/genres)  
 - 🎥 Displays **Title, Rating, Duration, Genre, Cast, and Poster image**
 
+<img width="772" height="1003" alt="image" src="https://github.com/user-attachments/assets/437d5b80-34ad-44a4-ac53-ed166ae0da18" />
+
 ---
 
 ## 🧑‍🔬 Data Science Workflow
@@ -48,13 +50,15 @@ A **content-based movie recommendation engine** built as a full **Data Science p
 - Engineered hybrid feature: **Genre similarity + Rating score**  
 
 ### 🔹 5. Model Building
-- Used **Cosine Similarity** to measure closeness between vectors  
+- Used **linear Similarity** to measure closeness between vectors  
 - Modes: Title, Genre, Hybrid, Random, Popular  
 
 ### 🔹 6. Deployment
 - Built a Flask backend with API endpoints (`/movies`, `/recommend`)  
 - Designed an interactive frontend with HTML/CSS/JS  
 - Integrated posters and metadata into results view  
+
+<img width="1559" height="876" alt="image" src="https://github.com/user-attachments/assets/f3d805ac-d1a3-4004-b6d8-fe7929c1068f" />
 
 ---
 
